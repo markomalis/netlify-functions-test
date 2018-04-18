@@ -6,14 +6,16 @@
   </head>
   <body>
     <h1>Netlify Test Functions</h1>
-    <form action="" onsubmit="submitForm()">
+    <form action="#" onsubmit="submitForm()">
       <input type="text" placeholder="enter message" data-input />
       <button type="submit">Send</button>
     </form>
     <script>
       const input = document.querySelector('[data-input]')
 
-      function submitForm() {
+      function submitForm(e) {
+        e.preventDefault();
+
         fetch('/.netlify/functions/add-image')
           .then(function(response) {
             console.log('input value', input.value)
