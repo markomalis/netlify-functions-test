@@ -5,6 +5,25 @@
     <title>title</title>
   </head>
   <body>
-    <h1>Netlify Functions ONLY!!!</h1>
+    <h1>Netlify Test Functions</h1>
+    <form action="" onsubmit="submitForm()">
+      <input type="text" placeholder="enter message" data-input />
+      <button type="submit">Send</button>
+    </form>
+    <script>
+      const input = document.querySelector('[data-input]')
+
+      function submitForm() {
+        fetch('/.netlify/functions/add-image')
+          .then(function(response) {
+            console.log('input value', input.value)
+            return response.json();
+          })
+          .then(function(body) {
+            console.log('Response body', body);
+          });
+      }
+      
+    </script>
   </body>
 </html>
