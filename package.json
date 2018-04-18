@@ -7,7 +7,7 @@
     "prebuild": "rimraf public/ && mkdirp public/ && ",
     "build": "npm run build:functions && npm run build:public",
     "build:functions": "netlify-lambda build ./functions",
-    "build:public": "cp index.html ./public/index.html",
+    "build:public": "cp ./index.html ./public/",
     "dev": "netlify-lambda serve functions",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
