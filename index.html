@@ -6,26 +6,66 @@
   </head>
   <body>
     <h1>Netlify Test Functions</h1>
-    <form action="#" onsubmit="submitForm()">
-      <input type="text" placeholder="enter message" data-input />
+    <form action="" data-form>
+      <input type="file" placeholder="enter message" data-input />
       <button type="submit">Send</button>
     </form>
     <script>
+      const BUCKET_URL = 'https://s3.eu-central-1.amazonaws.com/pick-up-10'
+      const SERVICES_URL = 'http://localhost:9000'
+
+      const form = document.querySelector('[data-form]')
       const input = document.querySelector('[data-input]')
 
-      function submitForm(e) {
-        e.preventDefault();
+      form.onsubmit = submitForm
 
-        fetch('/.netlify/functions/add-image')
-          .then(function(response) {
-            console.log('input value', input.value)
-            return response.json();
-          })
-          .then(function(body) {
-            console.log('Response body', body);
-          });
+      function submitForm(e) {
+        e.preventDefault()
+
+        const image = input.files[0]
+        const reader = new FileReader()
+
+        reader.onload = () => {
+          fetch(`${SERVICES_URL}/get-upload-url`, { 
+              method: 'POST',
+              body: JSON.stringify({
+                name: image.name,
+                type: image.type
+              })
+            })
+            .then(function(response) {
+              return response.json();
+            })
+            .then(function({ signedUrl }) {
+              return fetch(signedUrl, { 
+                method: 'PUT', 
+                body: new Blob([reader.result], {type: image.type}) 
+              })
+            })
+            .then(() => {
+              return fetch(`${SERVICES_URL}/annotate-image`, {
+                method: 'POST',
+                body: JSON.stringify({
+                  image: `${BUCKET_URL}/${escape(image.name)}`
+                })
+              })
+            })
+            .then(res => {
+              if(res.status === 200) {
+                res.json()
+              }
+            })
+            .then(({ responses }) => {
+                console.log('Vision Response', responses)
+            })
+            .catch(err => {
+              console.log('Error processing image:', err)
+            })
+            
+        }
+
+        reader.readAsArrayBuffer(image)
       }
-      
     </script>
   </body>
 </html>

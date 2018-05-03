@@ -8,7 +8,9 @@
     "build:functions": "netlify-lambda build ./functions",
     "prebuild:public": "rimraf ./public && mkdirp public ",
     "build:public": "cp ./index.html ./public/",
-    "dev": "netlify-lambda serve functions",
+    "dev": "npm run dev:functions && npm run dev:public",
+    "dev:functions": "netlify-lambda serve functions",
+    "dev:public": "http-server .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,11 +24,14 @@
   },
   "homepage": "https://github.com/markomalis/netlify-functions-test#readme",
   "devDependencies": {
+    "http-server": "^0.11.1",
     "netlify-lambda": "^0.4.0"
   },
   "dependencies": {
+    "aws-sdk": "^2.224.1",
     "cp": "^0.2.0",
     "mkdirp": "^0.5.1",
+    "node-fetch": "^2.1.2",
     "rimraf": "^2.6.2"
   }
 }
